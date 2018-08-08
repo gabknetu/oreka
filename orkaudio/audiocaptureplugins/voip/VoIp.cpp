@@ -103,6 +103,7 @@ const int pcap_live_snaplen = 65535;
 #define ETC_SKINNY_GLOBAL_NUMBERS_FILE	"/etc/orkaudio/skinnyglobalnumbers.csv"
 #define PROT_ERSPAN 0x88be
 #define IPPROTO_GRE 47
+#define PROT_TRP 0x6558	//Transparent Ethernet Bridging
 
 //========================================================
 class PcapHandleData
@@ -406,7 +407,7 @@ bool TryRtp(EthernetHeaderStruct* ethernetHeader, IpHeaderStruct* ipHeader, UdpH
 				return true;
 			}
 
-			if((rtpHeader->pt <= 34 &&  rtpHeader->pt != 13) || (rtpHeader->pt >= 97 && rtpHeader->pt < 127) )         
+			if((rtpHeader->pt <= 34 &&  rtpHeader->pt != 13) || (rtpHeader->pt >= 97 && rtpHeader->pt < 128) )         
 			// pt=13 is CN (Comfort Noise)
 			// pt=34 is H263
 			// pt=97 is IAX2 iLBC payload
@@ -715,11 +716,21 @@ void ProcessTransportLayer(EthernetHeaderStruct* ethernetHeader, IpHeaderStruct*
 	{
 		//Check if its ESPAN
 		GreHeaderStruct *greHeader = (GreHeaderStruct*)((char *)ipHeader + ipHeaderLength);
-		if(ntohs(greHeader->flagVersion) == 0x1000 && ntohs(greHeader->protocolType) == PROT_ERSPAN)
+		if((ntohs(greHeader->flagVersion) == 0x1000 && ntohs(greHeader->protocolType) == PROT_ERSPAN)
+		  || (ntohs(greHeader->flagVersion) == 0x2000 && ntohs(greHeader->protocolType) == PROT_TRP) )
 		{
 			//temporary ignore Erspan payload, flag ...
 			//Follow is the real headers got encapsulated
-			EthernetHeaderStruct* encapsulatedEthernetHeader = (EthernetHeaderStruct *)((char *)ipHeader + ipHeaderLength +  sizeof(GreHeaderStruct) + sizeof(ErspanHeaderStruct));
+			EthernetHeaderStruct* encapsulatedEthernetHeader;
+			if(ntohs(greHeader->protocolType) == PROT_ERSPAN)
+			{
+				encapsulatedEthernetHeader = (EthernetHeaderStruct *)((char *)ipHeader + ipHeaderLength +  sizeof(GreHeaderStruct) + sizeof(ErspanHeaderStruct));
+			}
+			else
+			{
+				encapsulatedEthernetHeader = (EthernetHeaderStruct *)((char *)ipHeader + ipHeaderLength +  sizeof(GreHeaderStruct));
+			}
+			
 			IpHeaderStruct* encapsulatedIpHeader = NULL;
 
 			if(ntohs(encapsulatedEthernetHeader->type) == 0x8100)

@@ -56,6 +56,7 @@
 #include "SocketStreamer.h"
 #include "SpeexCodec.h"
 #include "G721Codec.h"
+#include "OpusCodec.h"
 
 static volatile bool serviceStop = false;
 
@@ -170,6 +171,8 @@ void Transcode(CStdString &file)
 	FilterRegistry::instance()->RegisterFilter(filter);
 	filter.reset(new G721CodecDecoder());
 	FilterRegistry::instance()->RegisterFilter(filter);
+    filter.reset(new OpusCodecDecoder());
+	FilterRegistry::instance()->RegisterFilter(filter);
 
 	// Register in-built tape processors and build the processing chain
 	BatchProcessing::Initialize();
@@ -269,6 +272,8 @@ void MainThread()
 	FilterRegistry::instance()->RegisterFilter(filter);
 	filter.reset(new G721CodecDecoder());
 	FilterRegistry::instance()->RegisterFilter(filter);
+    filter.reset(new OpusCodecDecoder());
+	FilterRegistry::instance()->RegisterFilter(filter);
 
 	// Register in-built tape processors and build the processing chain
 	OrkTrack::Initialize(CONFIG.m_trackerHostname, CONFIG.m_trackerServicename, CONFIG.m_trackerTcpPort);
@@ -285,7 +290,7 @@ void MainThread()
 	}
 	if(CONFIG.m_storageAudioFormat != FfNative)
 	{
-		// storage format is not native, which means we need batch workers to compress to wanted format
+		// storage format is not native, which means we need batch workers to compress to wanted format 
 		if (!ACE_Thread_Manager::instance()->spawn_n(CONFIG.m_numBatchThreads, ACE_THR_FUNC(BatchProcessing::ThreadHandler)))
 		{
 			LOG4CXX_INFO(LOG.rootLog, CStdString("Failed to create batch processing thread"));
@@ -360,7 +365,6 @@ void MainThread()
 }
 
 
-
 int main(int argc, char* argv[])
 {
 	// the "service name" reported on the tape messages uses CONFIG.m_serviceName
@@ -374,7 +378,7 @@ int main(int argc, char* argv[])
 	CStdString argument = argv[1];
 	if (argc>1)
 	{
-		if (argument.CompareNoCase("debug") == 0) 
+		if (argument.CompareNoCase("debug") == 0)
 		{
 			MainThread();
 		}
