@@ -22,7 +22,7 @@ Based on [Orecx Oreka](http://www.orecx.com/open-source/), this project tries to
 The build tool is separately available at [github:Oreka-build](https://github.com/kingster/oreka-build) which builds the project on a Ubuntu14.04 Virtual Box. 
 You can natively build if you have all dependencies but I develop on a OSx system, so have kept it separate.
 
-### Distribution
+### Distribution & Installation
 
 Ubuntu installers are available via [Bintray](https://bintray.com/kingster/deb/oreka). To add the sources to your system run the following command
 ```
