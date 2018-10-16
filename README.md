@@ -24,7 +24,12 @@ You can natively build if you have all dependencies but I develop on a OSx syste
 
 ### Distribution
 
-Debian installers are planned for release via [Bintray](https://bintray.com/kingster/deb/oreka)
+Ubuntu installers are available via [Bintray](https://bintray.com/kingster/deb/oreka). To add the sources to your system run the following command
+```
+echo "deb https://dl.bintray.com/kingster/deb /" | sudo tee -a /etc/apt/sources.list.d/oreka.list
+apt update
+apt install oreka
+```
 
 #### More Information
 Read [more](README.txt)
