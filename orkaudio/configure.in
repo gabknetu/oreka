@@ -21,6 +21,8 @@ else
 	CXXFLAGS+=" -g -O2 -fno-inline-functions"
 fi
 
+LDFLAGS+=" -lopus"
+
 AC_LANG_CPLUSPLUS
 AC_PROG_CXX
 AM_PROG_LIBTOOL
@@ -29,7 +31,9 @@ AC_PREFIX_DEFAULT(/usr)
 
 AC_SUBST(speex_lib,$speex_lib)
 	
-AC_OUTPUT(Makefile audiocaptureplugins/Makefile audiocaptureplugins/generator/Makefile audiocaptureplugins/voip/Makefile filters/Makefile filters/rtpmixer/Makefile filters/silkcodec/Makefile filters/opuscodec/Makefile filters/g729codec/Makefile)
+AC_OUTPUT(Makefile audiocaptureplugins/Makefile audiocaptureplugins/generator/Makefile audiocaptureplugins/voip/Makefile filters/Makefile filters/rtpmixer/Makefile filters/silkcodec/Makefile filters/g729codec/Makefile)
+
+
 
 echo ""
 echo "========= Configuration ==========="
